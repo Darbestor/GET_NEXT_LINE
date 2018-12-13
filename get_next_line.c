@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 17:26:13 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 20:19:01 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,21 @@
 #include <string.h>
 #include "libft/libft.h"
 
-
-#include <fcntl.h>
-#include <stdio.h>
-
 static char		*ft_str_increase(char *s1, long long len1, long long len2)
 {
 	char *conc;
 
-	conc = ft_strnew(len1 + len2);
- 	if (!conc)
+	if (!(conc = ft_strnew(len1 + len2)))
 	{
 		if (s1)
-			free(s1);
+			ft_memdel((void**)&s1);
 		return (NULL);
 	}
- 	if (!len1)
+	if (!len1)
 		return (conc);
- 	ft_memmove(conc, s1, len1);
+	ft_memmove(conc, s1, len1);
 	if (s1)
-		free(s1);
+		ft_memdel((void**)&s1);
 	return (conc);
 }
 
@@ -63,7 +58,8 @@ static t_gnl	*ft_find_fd(const int fd, t_gnl **gnl)
 	return (temp);
 }
 
-static int		ft_search_newline(char *str, char **line, t_gnl *gnl, long long j)
+static int		ft_search_newline(char *str, char **line, t_gnl *gnl,
+				long long j)
 {
 	long long	i;
 
@@ -79,15 +75,40 @@ static int		ft_search_newline(char *str, char **line, t_gnl *gnl, long long j)
 			gnl->len = j - i;
 			if (gnl->len)
 			{
- 				if (!(gnl->line = ft_strnew(gnl->len)))
-				 	return (0);
+				if (!(gnl->line = ft_strnew(gnl->len)))
+					return (0);
 				j = 0;
 				while (j < gnl->len)
 					gnl->line[j++] = str[i++];
 			}
+			ft_memdel((void**)(&str));
 			return (2);
 		}
 	return (1);
+}
+
+static void		ft_del_node(t_gnl **gnl, t_gnl **temp, char **str)
+{
+	t_gnl *prev;
+
+	prev = *gnl;
+	if (prev == *temp)
+	{
+		if ((*temp)->next)
+			*gnl = (*temp)->next;
+	}
+	else
+	{
+		while (prev->next != *temp)
+			prev = prev->next;
+		if ((*temp)->next)
+			prev->next = (*temp)->next;
+	}
+	(*temp)->next = NULL;
+	(*temp)->len = 0;
+	(*temp)->fd = 0;
+	ft_memdel((void**)temp);
+	ft_memdel((void**)str);
 }
 
 int				get_next_line(const int fd, char **line)
@@ -109,17 +130,30 @@ int				get_next_line(const int fd, char **line)
 			return (1);
 		str = ft_str_increase(str, temp->len, BUFF_SIZE);
 	}
-	if (temp->len && size > -1)
+	if (temp->len && size > -1 && er && str)
 	{
-		*line = ft_strnew(temp->len);
-		while (temp->len--)
-			(*line)[temp->len] = str[temp->len];
+		*line = str;
+		temp->len = 0;
 		return (1);
 	}
-	return (size <= -1 ? -1 : 0);
+	ft_del_node(&gnl, &temp, &str);
+	return ((size <= -1 || !er) ? -1 : 0);
 }
 
-/* int	ft_memclr(char *str, char **line, t_gnl *temp, int size)
-{
+/* 
+#include <fcntl.h>
+#include <stdio.h>
 
+int	main(void)
+{
+	int	fd = open("test1", O_RDONLY);
+	char *line;
+	
+	while(get_next_line(fd, &line))
+	{
+		printf("%s\n", line);
+		ft_memdel((void**)&line);
+	}
+	close(fd);
+	return (0);
 } */
