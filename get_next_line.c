@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/12 20:25:09 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 14:15:09 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ static t_gnl	*ft_find_fd(const int fd, t_gnl **gnl)
 			return (temp);
 		temp = temp->next;
 	}
-	temp = malloc(sizeof(**gnl) * 1);
+	if (!(temp = malloc(sizeof(**gnl) * 1)))
+		return (NULL);
 	temp->fd = fd;
 	temp->len = 0;
 	temp->line = NULL;
@@ -95,9 +96,8 @@ int				get_next_line(const int fd, char **line)
 	size_t			size;
 	size_t			i;
 
-	if (fd < 0 || !line)
+	if (fd < 0 || !line || !(temp = ft_find_fd(fd, &gnl)))
 		return (-1);
-	temp = ft_find_fd(fd, &gnl);
 	if (ft_search_newline(temp->line, line, temp, temp->len))
 		return (1);
 	i = temp->len;
