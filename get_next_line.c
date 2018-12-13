@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 15:17:51 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 16:44:52 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,69 +94,28 @@ int				get_next_line(const int fd, char **line)
 	t_gnl			*temp;
 	char			*str;
 	long long int	size;
-	long long int	i;
 
 	if (fd < 0 || !line || !(temp = ft_find_fd(fd, &gnl)))
 		return (-1);
-	if ((i = ft_search_newline(temp->line, line, temp, temp->len)))
+	if (ft_search_newline(temp->line, line, temp, temp->len))
 		return (1);
-	i = temp->len;
 	str = ft_str_increase(temp->line, temp->len, BUFF_SIZE);
-	while ((size = read(temp->fd, str + i, BUFF_SIZE)) > 0)
+	while ((size = read(temp->fd, str + temp->len, BUFF_SIZE)) > 0 && str)
 	{
-		i += size;
-		if (ft_search_newline(str, line, temp, i))
+		if (ft_search_newline(str, line, temp, (temp->len += size)))
 			return (1);
-		str = ft_str_increase(str, i, BUFF_SIZE);
+		str = ft_str_increase(str, temp->len, BUFF_SIZE);
 	}
 	if (size < 0)
 		return (-1);
-	if (i)
+	if (temp->len)
 	{
-		*line = ft_strnew(i);
-		while (i--)
-			(*line)[i] = str[i];
-		temp->len = 0;
+		*line = ft_strnew(temp->len);
+		while (temp->len--)
+			(*line)[temp->len] = str[temp->len];
 		return (1);
 	}
 	return (0);
 }
 
 
-/*int					main(void)
-{
-	char	*str;
-	int		fd;
-	int		fd1;
-
-	fd = open("test", O_RDONLY);
-//	fd1 = open("test1", O_RDONLY);
-	int flag = 1;
-	while (flag)
-	{
-		flag = get_next_line(fd, &str);
-		printf("%s", str);
-		printf("\t%d\n", flag);*/
-//		flag = get_next_line(fd1, &str);
-//		printf("%s\n", str);
-//	}
-/* 	get_next_line(fd, &str);
-		printf("line: %s\n", str);
-	get_next_line(fd, &str);
-		printf("line: %s\n", str);
-	get_next_line(fd, &str);
-		printf("line: %s\n", str);
-	get_next_line(fd, &str);
-		printf("line: %s\n", str);
- 	fd1 = open("test1", O_RDONLY);
-	if (fd1 > -1)
-	{
-	get_next_line(fd1, &str);
-		printf("line: %s\n", str);
-	get_next_line(fd1, &str);
-		printf("line: %s\n", str);
- 	get_next_line(fd, &str);
-		printf("line: %s\n", str);
-	}*/
-//	return (0);
-//}
