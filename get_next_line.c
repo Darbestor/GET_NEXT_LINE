@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 14:15:09 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 14:39:48 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,12 @@ static char		*ft_str_increase(char *s1, size_t len1, size_t len2)
 
 	conc = ft_strnew(len1 + len2);
  	if (!conc)
+	{
+		if (s1)
+			free(s1);
 		return (NULL);
+	}
+
  	if (!len1)
 		return (conc);
  	ft_memmove(conc, s1, len1);
@@ -65,26 +70,22 @@ static int		ft_search_newline(char *str, char **line, t_gnl *gnl, size_t j)
 
 	gnl->len = 0;
 	while (str && gnl->len < j)
-	{
-		if (str[gnl->len] == '\n')
+		if (str[gnl->len++] == '\n')
 		{
-			*line = ft_strnew(gnl->len);
+			*line = ft_strnew(gnl->len - 1);
 
 			i = 0;
-			while (i++ < gnl->len)
+			while (i++ < gnl->len - 1)
 				(*line)[i - 1] = str[i - 1];
 			gnl->len = j - i;
-			if (gnl->len)
+			if (gnl->len && (gnl->line = ft_strnew(gnl->len)))
 			{
-				gnl->line = ft_strnew(gnl->len);
 				j = 0;
 				while (j < gnl->len)
 					gnl->line[j++] = str[i++];
 			}
 			return (1);
 		}
-		gnl->len++;
-	}
 	return (0);
 }
 
@@ -98,7 +99,7 @@ int				get_next_line(const int fd, char **line)
 
 	if (fd < 0 || !line || !(temp = ft_find_fd(fd, &gnl)))
 		return (-1);
-	if (ft_search_newline(temp->line, line, temp, temp->len))
+	if ((i = ft_search_newline(temp->line, line, temp, temp->len)))
 		return (1);
 	i = temp->len;
 	str = ft_str_increase(temp->line, temp->len, BUFF_SIZE);
