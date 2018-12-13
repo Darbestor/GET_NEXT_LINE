@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:32:29 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/12 19:27:34 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 15:20:20 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ typedef struct	s_gnl
 {
 	int					fd;
 	char				*line;
-	size_t				len;
+	long long int		len;
 	struct s_gnl		*next;
 }				t_gnl;
 

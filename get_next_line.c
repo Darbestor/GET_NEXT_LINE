@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 14:39:48 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/13 15:17:51 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static char		*ft_str_increase(char *s1, size_t len1, size_t len2)
+static char		*ft_str_increase(char *s1, long long len1, long long len2)
 {
 	char *conc;
 
@@ -64,16 +64,15 @@ static t_gnl	*ft_find_fd(const int fd, t_gnl **gnl)
 	return (temp);
 }
 
-static int		ft_search_newline(char *str, char **line, t_gnl *gnl, size_t j)
+static int		ft_search_newline(char *str, char **line, t_gnl *gnl, long long j)
 {
-	size_t	i;
+	long long	i;
 
 	gnl->len = 0;
 	while (str && gnl->len < j)
 		if (str[gnl->len++] == '\n')
 		{
 			*line = ft_strnew(gnl->len - 1);
-
 			i = 0;
 			while (i++ < gnl->len - 1)
 				(*line)[i - 1] = str[i - 1];
@@ -94,8 +93,8 @@ int				get_next_line(const int fd, char **line)
 	static t_gnl	*gnl;
 	t_gnl			*temp;
 	char			*str;
-	size_t			size;
-	size_t			i;
+	long long int	size;
+	long long int	i;
 
 	if (fd < 0 || !line || !(temp = ft_find_fd(fd, &gnl)))
 		return (-1);
@@ -103,36 +102,44 @@ int				get_next_line(const int fd, char **line)
 		return (1);
 	i = temp->len;
 	str = ft_str_increase(temp->line, temp->len, BUFF_SIZE);
-	while ((size = read(temp->fd, str + i, BUFF_SIZE)))
+	while ((size = read(temp->fd, str + i, BUFF_SIZE)) > 0)
 	{
 		i += size;
 		if (ft_search_newline(str, line, temp, i))
 			return (1);
 		str = ft_str_increase(str, i, BUFF_SIZE);
 	}
-	*line = ft_strnew(i);
-	while (i--)
-		(*line)[i] = str[i];
+	if (size < 0)
+		return (-1);
+	if (i)
+	{
+		*line = ft_strnew(i);
+		while (i--)
+			(*line)[i] = str[i];
+		temp->len = 0;
+		return (1);
+	}
 	return (0);
 }
 
 
-int					main(void)
+/*int					main(void)
 {
 	char	*str;
 	int		fd;
 	int		fd1;
 
 	fd = open("test", O_RDONLY);
-	fd1 = open("test1", O_RDONLY);
+//	fd1 = open("test1", O_RDONLY);
 	int flag = 1;
 	while (flag)
 	{
-		get_next_line(fd, &str);
-		printf("%s\n", str);
-		flag = get_next_line(fd1, &str);
-		printf("%s\n", str);
-	}
+		flag = get_next_line(fd, &str);
+		printf("%s", str);
+		printf("\t%d\n", flag);*/
+//		flag = get_next_line(fd1, &str);
+//		printf("%s\n", str);
+//	}
 /* 	get_next_line(fd, &str);
 		printf("line: %s\n", str);
 	get_next_line(fd, &str);
@@ -140,8 +147,8 @@ int					main(void)
 	get_next_line(fd, &str);
 		printf("line: %s\n", str);
 	get_next_line(fd, &str);
-		printf("line: %s\n", str); */
-/* 	fd1 = open("test1", O_RDONLY);
+		printf("line: %s\n", str);
+ 	fd1 = open("test1", O_RDONLY);
 	if (fd1 > -1)
 	{
 	get_next_line(fd1, &str);
@@ -150,6 +157,6 @@ int					main(void)
 		printf("line: %s\n", str);
  	get_next_line(fd, &str);
 		printf("line: %s\n", str);
-	} */
-	return (0);
-}
+	}*/
+//	return (0);
+//}
