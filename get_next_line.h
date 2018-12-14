@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:32:29 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 20:06:47 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/14 15:47:59 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <string.h>
 
-# define BUFF_SIZE 10
+# define BUFF_SIZE 1000
 
 typedef struct	s_gnl
 {

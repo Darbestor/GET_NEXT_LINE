@@ -6,12 +6,11 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/13 20:19:01 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/14 16:13:32 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include "libft/libft.h"
@@ -45,7 +44,7 @@ static t_gnl	*ft_find_fd(const int fd, t_gnl **gnl)
 			return (temp);
 		temp = temp->next;
 	}
-	if (!(temp = malloc(sizeof(**gnl) * 1)))
+	if (!(temp = ft_memalloc(sizeof(**gnl) * 1)))
 		return (NULL);
 	temp->fd = fd;
 	temp->len = 0;
@@ -139,21 +138,3 @@ int				get_next_line(const int fd, char **line)
 	ft_del_node(&gnl, &temp, &str);
 	return ((size <= -1 || !er) ? -1 : 0);
 }
-
-/* 
-#include <fcntl.h>
-#include <stdio.h>
-
-int	main(void)
-{
-	int	fd = open("test1", O_RDONLY);
-	char *line;
-	
-	while(get_next_line(fd, &line))
-	{
-		printf("%s\n", line);
-		ft_memdel((void**)&line);
-	}
-	close(fd);
-	return (0);
-} */
