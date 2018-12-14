@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/14 16:13:32 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/14 19:33:42 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int				get_next_line(const int fd, char **line)
 	long long int	size;
 	int				er;
 
-	if (fd < 0 || !line || !(temp = ft_find_fd(fd, &gnl)))
+	if (fd < 0 || !line || BUFF_SIZE <= 0 || !(temp = ft_find_fd(fd, &gnl)))
 		return (-1);
 	if ((er = ft_search_newline(temp->line, line, temp, temp->len)) == 2)
 		return (1);
