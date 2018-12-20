@@ -6,7 +6,7 @@
 /*   By: ghalvors <ghalvors@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/11 17:36:25 by ghalvors          #+#    #+#             */
-/*   Updated: 2018/12/14 19:33:42 by ghalvors         ###   ########.fr       */
+/*   Updated: 2018/12/20 16:24:08 by ghalvors         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ static t_gnl	*ft_find_fd(const int fd, t_gnl **gnl)
 	temp->fd = fd;
 	temp->len = 0;
 	temp->line = NULL;
-	if (!gnl)
+	if (!*gnl)
 		temp->next = NULL;
 	else
 		temp->next = *gnl;
-	(*gnl) = temp;
+	*gnl = temp;
 	return (temp);
 }
 
@@ -90,14 +90,16 @@ static void		ft_del_node(t_gnl **gnl, t_gnl **temp, char **str)
 {
 	t_gnl *prev;
 
-	prev = *gnl;
-	if (prev == *temp)
+	if (*gnl == *temp)
 	{
 		if ((*temp)->next)
 			*gnl = (*temp)->next;
+		else
+			temp = gnl;
 	}
 	else
 	{
+		prev = *gnl;
 		while (prev->next != *temp)
 			prev = prev->next;
 		if ((*temp)->next)
